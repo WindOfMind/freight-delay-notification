@@ -1,11 +1,11 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import { config } from "./config/config";
 import logger from "./logger/logger";
 import { errorHandler } from "./middleware/errorHandler";
 import { requestLogger } from "./middleware/requestLogger";
 
 // Import routes
-import healthRoutes from "./routes/health";
+import delayRoutes from "./routes/delay";
 
 class App {
     public app: Express;
@@ -30,25 +30,7 @@ class App {
     }
 
     private initializeRoutes(): void {
-        // Health check routes
-        this.app.use("/health", healthRoutes);
-
-        // Root endpoint
-        this.app.get("/", (_req: Request, res: Response) => {
-            res.json({
-                message: "Freight Delay Notification Service",
-                version: "1.0.0",
-                status: "running",
-            });
-        });
-
-        // 404 handler
-        this.app.use("*", (req: Request, res: Response) => {
-            res.status(404).json({
-                error: "Route not found",
-                path: req.originalUrl,
-            });
-        });
+        this.app.use("/delay", delayRoutes);
     }
 
     private initializeErrorHandling(): void {
