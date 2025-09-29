@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import { config } from "./config/config";
-import { logger } from "./utils/logger";
+import logger from "./logger/logger";
 import { errorHandler } from "./middleware/errorHandler";
 import { requestLogger } from "./middleware/requestLogger";
 
@@ -21,12 +21,12 @@ class App {
     }
 
     private initializeMiddlewares(): void {
+        // Request logging middleware (should be first to capture all requests)
+        this.app.use(requestLogger);
+
         // Body parsing middleware
         this.app.use(express.json({ limit: "10mb" }));
         this.app.use(express.urlencoded({ extended: true, limit: "10mb" }));
-
-        // Request logging middleware
-        this.app.use(requestLogger);
     }
 
     private initializeRoutes(): void {

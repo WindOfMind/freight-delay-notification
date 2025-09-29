@@ -1,5 +1,5 @@
 import App from "./app";
-import { logger } from "./utils/logger";
+import logger from "./logger/logger";
 
 // Handle uncaught exceptions
 process.on("uncaughtException", (error: Error) => {

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { logger } from "../utils/logger";
+import logger from "../logger/logger";
 
 interface Error {
     status?: number;
@@ -35,7 +35,7 @@ export const errorHandler = (
         error: {
             status,
             message,
-            ...(process.env.NODE_ENV === "development" && {
+            ...(process.env["NODE_ENV"] === "development" && {
                 stack: error.stack,
             }),
         },
