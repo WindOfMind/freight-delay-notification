@@ -1,5 +1,7 @@
 import { NativeConnection, Worker } from "@temporalio/worker";
-import * as activities from "./activity";
+import { createActivities } from "./activity";
+import { config } from "../config/config";
+import { GoogleMapsRoutingClient } from "../api-client/googleMapsRoutingClient";
 
 async function run() {
     // Step 1: Establish a connection with Temporal server.
@@ -11,15 +13,22 @@ async function run() {
         // TLS and gRPC metadata configuration goes here.
     });
 
+    const googleMapsApiKey = config.googleMapsApiKey;
+    if (!googleMapsApiKey) {
+        throw new Error("GOOGLE_MAPS_API_KEY is not set");
+    }
+
+    const googleMapsClient = new GoogleMapsRoutingClient(googleMapsApiKey);
+
     try {
         // Step 2: Register Workflows and Activities with the Worker.
         const worker = await Worker.create({
             connection,
             namespace: "default",
-            taskQueue: "hello-world",
+            taskQueue: "delay-notification",
             // Workflows are registered using a path as they run in a separate JS context.
             workflowsPath: require.resolve("./workflow"),
-            activities,
+            activities: createActivities(googleMapsClient),
         });
 
         // Step 3: Start accepting tasks on the `hello-world` queue

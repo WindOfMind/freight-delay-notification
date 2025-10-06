@@ -9,6 +9,7 @@ interface Config {
     corsOrigin: string;
     logLevel: string;
     logDir: string;
+    googleMapsApiKey: string;
 }
 
 const config: Config = {
@@ -17,6 +18,7 @@ const config: Config = {
     corsOrigin: process.env["CORS_ORIGIN"] || "*",
     logLevel: process.env["LOG_LEVEL"] || "info",
     logDir: process.env["LOG_DIR"] || "logs",
+    googleMapsApiKey: process.env["GOOGLE_MAPS_API_KEY"] || "",
 };
 
 export { config };

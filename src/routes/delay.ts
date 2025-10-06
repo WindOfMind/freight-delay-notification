@@ -1,12 +1,13 @@
 import { Router, Request, Response } from "express";
 import { Client, Connection } from "@temporalio/client";
 import { nanoid } from "nanoid";
-import { example } from "../workflow/workflow";
+import { routeDelayNotificationWorkflow } from "../workflow/workflow";
+import logger from "../logger/logger";
 
 const router = Router();
 
 // Basic health check
-router.post("/check", async (_req: Request, res: Response) => {
+router.post("/check", async (req: Request, res: Response) => {
     const connection = await Connection.connect({ address: "localhost:7233" });
     // In production, pass options to configure TLS and other settings:
     // {
@@ -19,20 +20,26 @@ router.post("/check", async (_req: Request, res: Response) => {
         // namespace: 'foo.bar', // connects to 'default' namespace if not specified
     });
 
-    const handle = await client.workflow.start(example, {
-        taskQueue: "hello-world",
+    const { origin, destination } = req.body;
+
+    if (!origin || !destination) {
+        res.status(400).json({ error: "Missing origin or destination" });
+        return;
+    }
+
+    logger.info("Received delay check request", { origin, destination });
+
+    const handle = await client.workflow.start(routeDelayNotificationWorkflow, {
+        taskQueue: "delay-notification",
         // type inference works! args: [name: string]
-        args: ["Temporal"],
+        args: [origin, destination],
         // in practice, use a meaningful business ID, like customerId or transactionId
         workflowId: "workflow-" + nanoid(),
     });
-    console.log(`Started workflow ${handle.workflowId}`);
 
-    // optional: wait for client result
-    const result = await handle.result();
-    console.log(result); // Hello, Temporal!
+    logger.info("Started workflow", { workflowId: handle.workflowId });
 
-    res.status(200).json({ status: "OK", workflowResult: result });
+    res.status(200).json({ status: "OK" });
 });
 
 export default router;
