@@ -10,6 +10,7 @@ interface Config {
     logLevel: string;
     logDir: string;
     googleMapsApiKey: string;
+    openAiApiKey: string;
 }
 
 const config: Config = {
@@ -19,6 +20,7 @@ const config: Config = {
     logLevel: process.env["LOG_LEVEL"] || "info",
     logDir: process.env["LOG_DIR"] || "logs",
     googleMapsApiKey: process.env["GOOGLE_MAPS_API_KEY"] || "",
+    openAiApiKey: process.env["OPEN_AI_API_KEY"] || "",
 };
 
 export { config };

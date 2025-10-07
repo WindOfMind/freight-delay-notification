@@ -2,6 +2,7 @@ import { NativeConnection, Worker } from "@temporalio/worker";
 import { createActivities } from "./activity";
 import { config } from "../config/config";
 import { GoogleMapsRoutingClient } from "../api-client/googleMapsRoutingClient";
+import { OpenAIClient } from "../api-client/openAiClient";
 
 async function run() {
     // Step 1: Establish a connection with Temporal server.
@@ -18,6 +19,13 @@ async function run() {
         throw new Error("GOOGLE_MAPS_API_KEY is not set");
     }
 
+    // Initialize OpenAI Client
+    const openAiApiKey = config.openAiApiKey;
+    if (!openAiApiKey) {
+        throw new Error("OPEN_AI_API_KEY is not set");
+    }
+    const openAIClient = new OpenAIClient(openAiApiKey);
+
     const googleMapsClient = new GoogleMapsRoutingClient(googleMapsApiKey);
 
     try {
@@ -28,7 +36,7 @@ async function run() {
             taskQueue: "delay-notification",
             // Workflows are registered using a path as they run in a separate JS context.
             workflowsPath: require.resolve("./workflow"),
-            activities: createActivities(googleMapsClient),
+            activities: createActivities(googleMapsClient, openAIClient),
         });
 
         // Step 3: Start accepting tasks on the `hello-world` queue

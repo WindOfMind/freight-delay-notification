@@ -5,7 +5,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import { requestLogger } from "./middleware/requestLogger";
 
 // Import routes
-import delayRoutes from "./routes/delay";
+import delayRoutes from "./routing/delay";
 
 class App {
     public app: Express;

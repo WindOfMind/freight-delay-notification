@@ -6,7 +6,6 @@ import logger from "../logger/logger";
 
 const router = Router();
 
-// Basic health check
 router.post("/check", async (req: Request, res: Response) => {
     const connection = await Connection.connect({ address: "localhost:7233" });
     // In production, pass options to configure TLS and other settings:
@@ -20,19 +19,25 @@ router.post("/check", async (req: Request, res: Response) => {
         // namespace: 'foo.bar', // connects to 'default' namespace if not specified
     });
 
-    const { origin, destination } = req.body;
+    // TODO: add zod for request validation
+    const { origin, destination, userName, orderId, thresholdInSec } = req.body;
 
-    if (!origin || !destination) {
-        res.status(400).json({ error: "Missing origin or destination" });
+    if (!origin || !destination || !userName || !orderId || !thresholdInSec) {
+        res.status(400).json({ error: "Missing required fields" });
         return;
     }
 
-    logger.info("Received delay check request", { origin, destination });
+    logger.info("Received delay check request", {
+        origin,
+        destination,
+        userName,
+        orderId,
+        thresholdInSec,
+    });
 
     const handle = await client.workflow.start(routeDelayNotificationWorkflow, {
         taskQueue: "delay-notification",
-        // type inference works! args: [name: string]
-        args: [origin, destination],
+        args: [origin, destination, orderId, userName, thresholdInSec],
         // in practice, use a meaningful business ID, like customerId or transactionId
         workflowId: "workflow-" + nanoid(),
     });

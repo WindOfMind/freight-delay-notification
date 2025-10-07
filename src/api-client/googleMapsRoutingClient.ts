@@ -2,7 +2,7 @@ import * as Routing from "@googlemaps/routing";
 
 import Waypoint = Routing.protos.google.maps.routing.v2.Waypoint;
 import logger from "../logger/logger";
-import { Location, RouteInfo } from "../routes/types";
+import { Location, RouteInfo } from "../routing/types";
 
 export class GoogleMapsRoutingClient {
     private client: Routing.v2.RoutesClient;
