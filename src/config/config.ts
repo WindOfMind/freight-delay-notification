@@ -12,6 +12,7 @@ interface Config {
     googleMapsApiKey: string;
     openAiApiKey: string;
     sendGridApiKey: string;
+    senderEmail: string;
 }
 
 const config: Config = {
@@ -23,6 +24,7 @@ const config: Config = {
     googleMapsApiKey: process.env["GOOGLE_MAPS_API_KEY"] || "",
     openAiApiKey: process.env["OPEN_AI_API_KEY"] || "",
     sendGridApiKey: process.env["SEND_GRID_API_KEY"] || "",
+    senderEmail: process.env["SENDER_EMAIL"] || "",
 };
 
 export { config };

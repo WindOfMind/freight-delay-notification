@@ -2,26 +2,26 @@ import sgMail from "@sendgrid/mail";
 
 export class SendGridClient {
     private client;
+    private senderEmail: string;
 
-    constructor(apiKey: string) {
+    constructor(apiKey: string, senderEmail: string) {
         sgMail.setApiKey(apiKey);
         this.client = sgMail;
+        this.senderEmail = senderEmail;
     }
 
     public async sendEmail({
-        from,
         to,
         subject,
         text,
     }: {
-        from: string;
         to: string;
         subject: string;
         text: string;
     }): Promise<void> {
         const msg = {
             to,
-            from,
+            from: this.senderEmail,
             subject,
             text,
         };

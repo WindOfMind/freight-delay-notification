@@ -4,8 +4,6 @@ import logger from "../logger/logger";
 import { OpenAIClient } from "../api-client/openAiClient";
 import { SendGridClient } from "../api-client/sendGridClient";
 
-const from = "aflitonovdv@gmail.com";
-
 export const createActivities = (
     googleMapsRoutingClient: GoogleMapsRoutingClient,
     openAIClient: OpenAIClient,
@@ -51,7 +49,6 @@ export const createActivities = (
         logger.info("Sending email", { to: userEmail, text });
 
         await sendGridClient.sendEmail({
-            from,
             to: userEmail,
             subject: "Delay Notification",
             text,

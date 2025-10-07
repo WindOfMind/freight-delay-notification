@@ -35,7 +35,11 @@ async function run() {
     if (!sendGridApiKey) {
         throw new Error("SEND_GRID_API_KEY is not set");
     }
-    const sendGridClient = new SendGridClient(sendGridApiKey);
+    const senderEmail = config.senderEmail;
+    if (!senderEmail) {
+        throw new Error("SENDER_EMAIL is not set");
+    }
+    const sendGridClient = new SendGridClient(sendGridApiKey, senderEmail);
 
     try {
         // Step 2: Register Workflows and Activities with the Worker.
