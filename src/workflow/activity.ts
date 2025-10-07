@@ -2,10 +2,14 @@ import { Location } from "../routing/types";
 import { GoogleMapsRoutingClient } from "../api-client/googleMapsRoutingClient";
 import logger from "../logger/logger";
 import { OpenAIClient } from "../api-client/openAiClient";
+import { SendGridClient } from "../api-client/sendGridClient";
+
+const from = "aflitonovdv@gmail.com";
 
 export const createActivities = (
     googleMapsRoutingClient: GoogleMapsRoutingClient,
-    openAIClient: OpenAIClient
+    openAIClient: OpenAIClient,
+    sendGridClient: SendGridClient
 ) => ({
     async calculateDelay(
         origin: Location,
@@ -41,5 +45,16 @@ export const createActivities = (
         logger.info("Generated message", { message });
 
         return message;
+    },
+
+    async sendNotification(text: string, userEmail: string): Promise<void> {
+        logger.info("Sending email", { to: userEmail, text });
+
+        await sendGridClient.sendEmail({
+            from,
+            to: userEmail,
+            subject: "Delay Notification",
+            text,
+        });
     },
 });

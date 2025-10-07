@@ -20,7 +20,14 @@ router.post("/check", async (req: Request, res: Response) => {
     });
 
     // TODO: add zod for request validation
-    const { origin, destination, userName, orderId, thresholdInSec } = req.body;
+    const {
+        origin,
+        destination,
+        userName,
+        orderId,
+        thresholdInSec,
+        userEmail,
+    } = req.body;
 
     if (!origin || !destination || !userName || !orderId || !thresholdInSec) {
         res.status(400).json({ error: "Missing required fields" });
@@ -37,7 +44,14 @@ router.post("/check", async (req: Request, res: Response) => {
 
     const handle = await client.workflow.start(routeDelayNotificationWorkflow, {
         taskQueue: "delay-notification",
-        args: [origin, destination, orderId, userName, thresholdInSec],
+        args: [
+            origin,
+            destination,
+            orderId,
+            userName,
+            userEmail,
+            thresholdInSec,
+        ],
         // in practice, use a meaningful business ID, like customerId or transactionId
         workflowId: "workflow-" + nanoid(),
     });

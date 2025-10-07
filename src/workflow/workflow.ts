@@ -2,7 +2,7 @@ import { proxyActivities } from "@temporalio/workflow";
 import type { createActivities } from "./activity";
 import { Location } from "../routing/types";
 
-const { calculateDelay, generateMessage } = proxyActivities<
+const { calculateDelay, generateMessage, sendNotification } = proxyActivities<
     ReturnType<typeof createActivities>
 >({
     startToCloseTimeout: "1 minute",
@@ -19,6 +19,7 @@ export async function routeDelayNotificationWorkflow(
     destination: Location,
     orderId: string,
     userName: string,
+    userEmail: string,
     thresholdInSec: number
 ): Promise<RouteDelayNotificationWorkflowResult> {
     const delay = await calculateDelay(origin, destination);
@@ -27,7 +28,9 @@ export async function routeDelayNotificationWorkflow(
         return { notificationSent: false, delayInSec: delay, thresholdInSec };
     }
 
-    await generateMessage(delay, userName, orderId);
+    const message = await generateMessage(delay, userName, orderId);
+
+    await sendNotification(message, userEmail);
 
     return { notificationSent: true, delayInSec: delay, thresholdInSec };
 }

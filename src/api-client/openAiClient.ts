@@ -19,7 +19,7 @@ export class OpenAIClient {
         const completion = await this.client.responses.create({
             model: "gpt-4o-mini",
             instructions: `You are a polite customer service assistant in the freight company. There is a delay in the shipment. 
-                Please explain the reason for the delay and apologize to the customer. 
+                Please explain the reason for the delay and apologize to the customer. This text will be used in the email notification. 
                 You are provided with the delay time in seconds, user name, orderId, company name and agent name in the JSON format.`,
             input: JSON.stringify({
                 delayTime: delayInSec,

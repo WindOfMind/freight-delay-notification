@@ -11,6 +11,7 @@ interface Config {
     logDir: string;
     googleMapsApiKey: string;
     openAiApiKey: string;
+    sendGridApiKey: string;
 }
 
 const config: Config = {
@@ -21,6 +22,7 @@ const config: Config = {
     logDir: process.env["LOG_DIR"] || "logs",
     googleMapsApiKey: process.env["GOOGLE_MAPS_API_KEY"] || "",
     openAiApiKey: process.env["OPEN_AI_API_KEY"] || "",
+    sendGridApiKey: process.env["SEND_GRID_API_KEY"] || "",
 };
 
 export { config };

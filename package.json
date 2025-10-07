@@ -21,6 +21,7 @@
     "license": "ISC",
     "dependencies": {
         "@googlemaps/routing": "^2.1.0",
+        "@sendgrid/mail": "^8.1.6",
         "@temporalio/client": "^1.13.0",
         "@temporalio/worker": "^1.13.0",
         "@temporalio/workflow": "^1.13.0",

@@ -3,6 +3,7 @@ import { createActivities } from "./activity";
 import { config } from "../config/config";
 import { GoogleMapsRoutingClient } from "../api-client/googleMapsRoutingClient";
 import { OpenAIClient } from "../api-client/openAiClient";
+import { SendGridClient } from "../api-client/sendGridClient";
 
 async function run() {
     // Step 1: Establish a connection with Temporal server.
@@ -14,10 +15,13 @@ async function run() {
         // TLS and gRPC metadata configuration goes here.
     });
 
+    // Initialize Google Maps Client
     const googleMapsApiKey = config.googleMapsApiKey;
     if (!googleMapsApiKey) {
         throw new Error("GOOGLE_MAPS_API_KEY is not set");
     }
+
+    const googleMapsClient = new GoogleMapsRoutingClient(googleMapsApiKey);
 
     // Initialize OpenAI Client
     const openAiApiKey = config.openAiApiKey;
@@ -26,7 +30,12 @@ async function run() {
     }
     const openAIClient = new OpenAIClient(openAiApiKey);
 
-    const googleMapsClient = new GoogleMapsRoutingClient(googleMapsApiKey);
+    // Initialize SendGrid Client
+    const sendGridApiKey = config.sendGridApiKey;
+    if (!sendGridApiKey) {
+        throw new Error("SEND_GRID_API_KEY is not set");
+    }
+    const sendGridClient = new SendGridClient(sendGridApiKey);
 
     try {
         // Step 2: Register Workflows and Activities with the Worker.
@@ -36,7 +45,11 @@ async function run() {
             taskQueue: "delay-notification",
             // Workflows are registered using a path as they run in a separate JS context.
             workflowsPath: require.resolve("./workflow"),
-            activities: createActivities(googleMapsClient, openAIClient),
+            activities: createActivities(
+                googleMapsClient,
+                openAIClient,
+                sendGridClient
+            ),
         });
 
         // Step 3: Start accepting tasks on the `hello-world` queue
